@@ -1,0 +1,50 @@
+# .github/workflows/process_files.yml
+name: Process Files
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  process-files:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run Python script
+      id: run-script
+      run: |
+        python scripts/example_script.py input/input.txt > output_files.txt
+        cat output_files.txt
+
+    - name: Process each output file
+      run: |
+        while IFS= read -r file; do
+          echo "Processing $file"
+          # Add your processing commands here
+        done < <(grep -oP 'output/output_\d+\.json' output_files.txt)
+
+    - name: Upload output files
+      uses: actions/upload-artifact@v2
+      with:
+        name: output-files
+        path: output/output_*.json
+
+    - name: Generate report
+      run: |
+        echo "Generating report..."
+        # Add commands to generate your report
+  
