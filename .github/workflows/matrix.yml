@@ -34,12 +34,17 @@ jobs:
         # Convert the array to a JSON array
         elements_json=$(printf '%s\n' "${elements[@]}" | jq -R . | jq -s .)
         echo "Elements JSON: $elements_json"
-        # Save the JSON array to an environment file
-        echo "MATRIX=$elements_json" >> $GITHUB_ENV
+        # Escape the JSON array for environment file
+        elements_json_escaped=$(echo $elements_json | jq -c .)
+        echo "MATRIX=$elements_json_escaped" >> $GITHUB_ENV
 
     - name: Set matrix output
       id: set-matrix
-      run: echo "::set-output name=matrix::${{ env.MATRIX }}"
+      run: echo "Matrix set"
+      env:
+        matrix: ${{ env.MATRIX }}
+      outputs:
+        matrix: ${{ env.MATRIX }}
 
   build:
     needs: prepare
