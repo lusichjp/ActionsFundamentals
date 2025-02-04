@@ -30,10 +30,6 @@ jobs:
         # Set the matrix output
         echo "::set-output name=matrix::$elements_json"
 
-    - name: Set matrix
-      id: set-matrix
-      run: echo "Matrix: ${{ steps.read-file.outputs.matrix }}"
-
   build:
     needs: prepare
     runs-on: ubuntu-latest
