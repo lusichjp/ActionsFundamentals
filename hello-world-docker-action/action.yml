@@ -1,13 +1,29 @@
-name: Hello World Docker Action
+name: 'Hello World Docker Action'
+description: 'Say hello to a user or the world.'
 inputs:
   who-to-greet:
+    description: 'Who to greet'
     required: true
-    default: 'World'
+    default: 'world'
 outputs:
   time:
-    description: 'The time we said Hello'
+    description: 'The time we said hello.'
 runs:
-  using: 'docker
+  using: 'docker'
   image: 'Dockerfile'
   args:
     - ${{ inputs.who-to-greet }}
+
+# name: Hello World Docker Action
+# inputs:
+#   who-to-greet:
+#     required: true
+#     default: 'World'
+# outputs:
+#   time:
+#     description: 'The time we said Hello'
+# runs:
+#   using: 'docker
+#   image: 'Dockerfile'
+#   args:
+#     - ${{ inputs.who-to-greet }}
