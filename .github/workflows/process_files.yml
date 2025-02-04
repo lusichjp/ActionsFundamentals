@@ -12,10 +12,10 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4
       with:
         python-version: '3.x'
 
@@ -38,7 +38,7 @@ jobs:
         done < <(grep -oP 'output/output_\d+\.json' output_files.txt)
 
     - name: Upload output files
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: output-files
         path: output/output_*.json
@@ -47,4 +47,3 @@ jobs:
       run: |
         echo "Generating report..."
         # Add commands to generate your report
-  
