@@ -35,9 +35,11 @@ jobs:
 
     - name: Set matrix
       id: set-matrix
-      run: |
-        echo "Matrix: ${{ env.matrix }}"
-        echo "::set-output name=matrix::${{ env.matrix }}"
+      run: echo "Matrix set"
+      env:
+        matrix: ${{ env.matrix }}
+      outputs:
+        matrix: ${{ env.matrix }}
 
   build:
     needs: prepare
