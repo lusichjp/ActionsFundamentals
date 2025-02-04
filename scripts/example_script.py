@@ -1,17 +1,18 @@
 # scripts/example_script.py
 import sys
 import os
+import json
 
 def process_file(input_file):
-    # Simulate processing and generating output files
     with open(input_file, 'r') as f:
-        data = f.read()
+        lines = f.read().splitlines()
     
     output_files = []
-    for i in range(3):  # Example: generating 3 output files
-        output_file = f"output/output_{i}.txt"
+    for i, line in enumerate(lines):
+        output_data = {"part_number": line}
+        output_file = f"output/output_{i}.json"
         with open(output_file, 'w') as f:
-            f.write(f"Processed data {i}: {data}")
+            json.dump(output_data, f, indent=4)
         output_files.append(output_file)
     
     return output_files
