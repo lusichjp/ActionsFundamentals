@@ -30,7 +30,7 @@ jobs:
       run: |
         python scripts/example_script.py input/input.txt
         elements=$(cat elements.txt | jq -R -s -c 'split("\n")[:-1]')
-        echo "::set-output name=elements::$elements"
+        echo "elements=$elements" >> $GITHUB_ENV
 
   process:
     needs: prepare
@@ -51,6 +51,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+
+    - name: Create output directory
+      run: mkdir -p output
 
     - name: Process element
       run: |
