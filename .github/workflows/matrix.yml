@@ -33,13 +33,9 @@ jobs:
         # Save the JSON array to an environment file
         echo "matrix=$elements_json" >> $GITHUB_ENV
 
-    - name: Set matrix
+    - name: Set matrix output
       id: set-matrix
-      run: echo "Matrix set"
-      env:
-        matrix: ${{ env.matrix }}
-      outputs:
-        matrix: ${{ env.matrix }}
+      run: echo "matrix=${{ env.matrix }}" >> $GITHUB_ENV
 
   build:
     needs: prepare
