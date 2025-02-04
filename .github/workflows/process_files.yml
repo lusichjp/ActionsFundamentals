@@ -31,6 +31,8 @@ jobs:
         python scripts/example_script.py input/input.txt
         elements=$(cat elements.txt | jq -R -s -c 'split("\n")[:-1]')
         echo "elements=$elements" >> $GITHUB_ENV
+      outputs:
+        elements: ${{ steps.get-elements.outputs.elements }}
 
   process:
     needs: prepare
