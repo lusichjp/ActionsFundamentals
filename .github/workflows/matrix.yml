@@ -1,7 +1,6 @@
-name: Dynamic Matrix Workflow
+name: CI
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
@@ -10,58 +9,35 @@ on:
       - main
 
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-
-    - name: Create elements.txt file
-      run: |
-        echo -e "element1\nelement2\nelement3" > elements.txt
-
-    - name: List files in the current directory
-      run: ls -al
-
-    - name: Read elements from file
-      id: read-file
-      run: |
-        # Read the file and store elements in an array
-        elements=($(cat elements.txt))
-        # Convert the array to a JSON array
-        elements_json=$(printf '%s\n' "${elements[@]}" | jq -R . | jq -s .)
-        echo "Elements JSON: $elements_json"
-        # Escape the JSON array for environment file
-        elements_json_escaped=$(echo $elements_json | jq -c .)
-        echo "MATRIX=$elements_json_escaped" >> $GITHUB_ENV
-
-    - name: Set matrix output
-      id: set-matrix
-      run: echo "::set-output name=matrix::${{ env.MATRIX }}"
-
   build:
-    needs: prepare
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        element: ${{ fromJson(needs.prepare.outputs.matrix) }}
+        part:
+          - part_number_1
+          - part_number_2
+          - part_number_3
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Execute code for element
-      run: |
-        echo "Executing code for element: ${{ matrix.element }}"
-        # Replace the following line with the actual code execution
-        echo "Running code for ${{ matrix.element }}..."
-        # Simulate code execution
-        sleep 5
-        echo "Completed code execution for ${{ matrix.element }}"
+      - name: Set up environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y jq
 
-    - name: Report progress
-      run: |
-        echo "Job for ${{ matrix.element }} completed."
+      - name: Execute commands for ${{ matrix.part }}
+        run: |
+          echo "Processing ${matrix.part}"
+          # Example of random commands
+          echo "Listing files in the current directory:"
+          ls -la
+          echo "Displaying current date and time:"
+          date
+          echo "Creating a file named ${matrix.part}.txt"
+          touch ${matrix.part}.txt
+          echo "Writing some content to ${matrix.part}.txt"
+          echo "This is a file for ${matrix.part}" > ${matrix.part}.txt
+          echo "Displaying the content of ${matrix.part}.txt"
+          cat ${matrix.part}.txt
