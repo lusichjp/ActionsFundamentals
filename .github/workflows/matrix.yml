@@ -19,14 +19,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: List files in the .github/workflows directory
-      run: ls -al .github/workflows
+    - name: Create elements.txt file
+      run: |
+        echo -e "element1\nelement2\nelement3" > elements.txt
+
+    - name: List files in the current directory
+      run: ls -al
 
     - name: Read elements from file
       id: read-file
       run: |
         # Read the file and store elements in an array
-        elements=($(cat .github/workflows/elements.txt))
+        elements=($(cat elements.txt))
         # Convert the array to a JSON array
         elements_json=$(printf '%s\n' "${elements[@]}" | jq -R . | jq -s .)
         echo "Elements JSON: $elements_json"
