@@ -20,9 +20,12 @@ def process_file(input_file):
             json.dump(output_data, f, indent=4)
         output_files.append(output_file)
     
-    return output_files
+    return lines
 
 if __name__ == "__main__":
     input_file = sys.argv[1]
-    output_files = process_file(input_file)
-    print("Generated files:", output_files)
+    elements = process_file(input_file)
+    with open("elements.txt", "w") as f:
+        for element in elements:
+            f.write(f"{element}\n")
+    print("Generated elements:", elements)
