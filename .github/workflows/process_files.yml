@@ -38,7 +38,7 @@ jobs:
         done < <(grep -oP 'output/output_\d+\.json' output_files.txt)
 
     - name: Upload output files
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: output-files
         path: output/output_*.json
