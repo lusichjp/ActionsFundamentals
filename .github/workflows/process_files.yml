@@ -7,9 +7,10 @@ on:
       - main
 
 jobs:
-  process-files:
+  prepare:
     runs-on: ubuntu-latest
-
+    outputs:
+      elements: ${{ steps.get-elements.outputs.elements }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
@@ -24,26 +25,41 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Python script
-      id: run-script
+    - name: Run Python script to get elements
+      id: get-elements
       run: |
-        python scripts/example_script.py input/input.txt > output_files.txt
-        cat output_files.txt
+        python scripts/example_script.py input/input.txt
+        elements=$(cat elements.txt | jq -R -s -c 'split("\n")[:-1]')
+        echo "::set-output name=elements::$elements"
 
-    - name: Process each output file
+  process:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        element: ${{ fromJson(needs.prepare.outputs.elements) }}
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
       run: |
-        while IFS= read -r file; do
-          echo "Processing $file"
-          # Add your processing commands here
-        done < <(grep -oP 'output/output_\d+\.json' output_files.txt)
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-    - name: Upload output files
+    - name: Process element
+      run: |
+        echo "Processing element: ${{ matrix.element }}"
+        output_file="output/output_${{ matrix.element }}.json"
+        echo '{"part_number": "'${{ matrix.element }}'"}' > $output_file
+
+    - name: Upload output file
       uses: actions/upload-artifact@v4
       with:
-        name: output-files
-        path: output/output_*.json
-
-    - name: Generate report
-      run: |
-        echo "Generating report..."
-        # Add commands to generate your report
+        name: output-${{ matrix.element }}
+        path: output/output_${{ matrix.element }}.json
